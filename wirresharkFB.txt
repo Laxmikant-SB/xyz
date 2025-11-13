@@ -1,0 +1,267 @@
+/* ============================================================
+   CN Practical – Wireshark Packet Capture (Facebook & HTTP)
+   ============================================================
+
+   AIM:
+   ----
+   To capture, analyze, and filter TCP and HTTP packets 
+   using Wireshark for Facebook and other web traffic.
+
+   ============================================================
+   THEORY:
+   ============================================================
+   - Wireshark is a packet analyzer tool used for capturing 
+     and inspecting network traffic in real time.
+   - It operates at the packet level, showing protocols such as:
+       TCP, UDP, HTTP, HTTPS, DNS, ARP, etc.
+   - Each network communication is divided into packets 
+     that can be filtered and analyzed for performance, 
+     security, or troubleshooting.
+
+   ============================================================
+   SOFTWARE REQUIRED:
+   ============================================================
+   1. Wireshark (latest version)
+   2. Web Browser (Chrome / Edge / Firefox)
+   3. Internet connectivity
+   4. Command Prompt or Terminal
+
+   ============================================================
+   SETUP INSTRUCTIONS (WINDOWS / UBUNTU)
+   ============================================================
+
+   Step 1: Install Wireshark
+           - Download from: https://www.wireshark.org/download.html
+           - Install using default options.
+
+   Step 2: Open Wireshark
+           - Select your active network interface:
+             e.g., Wi-Fi, Ethernet, or LAN adapter.
+
+   Step 3: Start Capture
+           - Click “Start Capturing Packets” (Blue Shark icon).
+
+   Step 4: Perform Required Actions
+           - Open websites like facebook.com or techpanda.org 
+             while Wireshark is running.
+
+   Step 5: Apply Filters
+           - To narrow down the packets to only required IPs or protocols.
+
+   Step 6: Stop Capture
+           - After capturing enough data, click the red “Stop” icon.
+           - Save the capture as `.pcapng` file if required.
+
+   ============================================================
+   PART A: CAPTURE TCP TRAFFIC TO/FROM FACEBOOK
+   ============================================================
+
+   // Objective:
+   To capture all TCP packets between the host computer and Facebook server.
+
+   // Steps:
+   1. Open Wireshark.
+   2. Select your active network interface (Wi-Fi or Ethernet).
+   3. Click “Start Capturing”.
+   4. Open Command Prompt → Type:
+         ping facebook.com
+      Example Output:
+         Pinging facebook.com [163.70.144.35] with 32 bytes of data.
+      → The IP address in brackets is the Facebook server’s IP.
+
+   5. In Wireshark, apply the filter:
+         tcp && ip.addr == 163.70.144.35
+
+   6. Log in to your Facebook account or browse its pages.
+   7. Observe captured TCP packets showing connection establishment,
+      data transfer, and termination.
+
+   // Verification:
+   - Packets will show “facebook.com” or the server IP in Destination/Source.
+   - Look for:
+       • SYN, SYN-ACK (Connection Establishment)
+       • ACK, PSH (Data Transfer)
+       • FIN (Connection Termination)
+
+   // Packet Flow Explanation:
+   - TCP 3-Way Handshake:
+       1. SYN → Client initiates connection.
+       2. SYN-ACK → Server acknowledges.
+       3. ACK → Client confirms; connection established.
+   - Data Exchange: Packets labeled PSH/ACK.
+   - Termination: FIN packets close connection gracefully.
+
+   ============================================================
+   PART B: CAPTURE HTTP TRAFFIC (Example: techpanda.org)
+   ============================================================
+
+   // Objective:
+   Capture and analyze HTTP packets (unencrypted web traffic).
+
+   // Steps:
+   1. Open a browser and go to:
+         http://techpanda.org
+   2. Enter any sample email and password on login form and click Submit.
+   3. In Command Prompt, ping the website:
+         ping techpanda.org
+      Example Output:
+         Pinging techpanda.org [10.30.74.132]
+   4. Apply the Wireshark filter:
+         http && ip.addr == 10.30.74.132
+   5. Observe HTTP GET and POST packets:
+      - GET → retrieving data (web page, images, etc.)
+      - POST → sending data (login form submission)
+
+   // Alternate Filters:
+   - For TCP SYN packets only:
+       tcp.flags.syn == 1 && ip.addr == 10.30.74.132
+   - To capture communication between two known IPs:
+       tcp && ip.addr == 10.30.74.132 && ip.addr == 157.240.242.14
+
+   // Verification:
+   - You should see TCP handshake and HTTP requests/responses.
+   - The Info column will show “GET /index.html” or “POST /login”.
+
+   ============================================================
+   FILTER COMMAND SUMMARY
+   ============================================================
+   tcp && ip.addr == 163.70.144.35             → Capture Facebook TCP traffic
+   http && ip.addr == 10.30.74.132             → Capture HTTP website traffic
+   tcp.flags.syn == 1                          → Show only SYN packets
+   ipv6.addr == 2a03:2880:f33e:8:face:b00c:0:25de → Capture Facebook IPv6 traffic
+
+   ============================================================
+   PACKET ANALYSIS AND OBSERVATION
+   ============================================================
+
+   // TCP Packet Analysis:
+   - Observe Source and Destination Ports (e.g., 443 for HTTPS, 80 for HTTP).
+   - Sequence and Acknowledgment numbers show reliable data delivery.
+   - Check TCP flags: SYN, ACK, PSH, FIN.
+
+   // HTTP Packet Analysis:
+   - Identify Request Type: GET / POST
+   - Look for Response Codes:
+       200 → OK
+       301 → Moved Permanently
+       404 → Not Found
+       500 → Internal Server Error
+   - Analyze packet payload to understand web data exchange.
+
+   ============================================================
+   SECURITY NOTE:
+   ============================================================
+   - Facebook traffic is encrypted via HTTPS, so packet contents 
+     will appear unreadable (encrypted data).
+   - HTTP websites (like techpanda.org) use plain text; 
+     form data may be visible in captured packets.
+
+   ============================================================
+   30 ORAL / VIVA QUESTIONS AND ANSWERS
+   ============================================================
+
+   1. Q: What is Wireshark?
+      A: A network packet capture and analysis tool.
+
+   2. Q: What layer of OSI model does Wireshark analyze?
+      A: It can analyze all layers from Physical to Application.
+
+   3. Q: What is the purpose of a network filter?
+      A: To view specific packets of interest among thousands captured.
+
+   4. Q: What command gets Facebook’s IP address?
+      A: ping facebook.com
+
+   5. Q: What is the Facebook TCP filter command?
+      A: tcp && ip.addr == <Facebook_IP>
+
+   6. Q: What is the difference between HTTP and HTTPS?
+      A: HTTPS is encrypted; HTTP is plain text.
+
+   7. Q: Which port does HTTP use?
+      A: Port 80.
+
+   8. Q: Which port does HTTPS use?
+      A: Port 443.
+
+   9. Q: What are TCP flags?
+      A: Indicators like SYN, ACK, PSH, FIN for connection control.
+
+   10. Q: What does “SYN” indicate?
+       A: Connection initiation (synchronization).
+
+   11. Q: What does “ACK” indicate?
+       A: Acknowledgment of data receipt.
+
+   12. Q: What does “PSH” indicate?
+       A: Data being pushed to the receiver.
+
+   13. Q: What does “FIN” indicate?
+       A: Connection termination.
+
+   14. Q: What does “GET” in HTTP mean?
+       A: Requesting data from the server.
+
+   15. Q: What does “POST” in HTTP mean?
+       A: Sending data (e.g., form submission) to the server.
+
+   16. Q: What command captures only TCP packets?
+       A: tcp
+
+   17. Q: What command captures only HTTP packets?
+       A: http
+
+   18. Q: What protocol is used by Facebook for secure browsing?
+       A: HTTPS (based on SSL/TLS over TCP).
+
+   19. Q: Can Wireshark decrypt HTTPS packets?
+       A: No, not without access to the session keys.
+
+   20. Q: What is an IP address?
+       A: A unique identifier assigned to each device on a network.
+
+   21. Q: What is a port number?
+       A: Logical communication endpoint used to identify applications.
+
+   22. Q: What type of packets will you see when pinging?
+       A: ICMP packets.
+
+   23. Q: What happens if you filter “ip.addr == 163.70.144.35”?
+       A: You’ll see all packets to and from that IP (Facebook).
+
+   24. Q: What protocol does Wireshark use for DNS lookup?
+       A: UDP port 53.
+
+   25. Q: What does packet color coding in Wireshark indicate?
+       A: Different protocol types (e.g., green for TCP, blue for DNS).
+
+   26. Q: What does “Follow TCP Stream” do?
+       A: Displays complete conversation between client and server.
+
+   27. Q: How can you save captured packets?
+       A: File → Save As → .pcapng
+
+   28. Q: What is a network interface in Wireshark?
+       A: The adapter (Wi-Fi, Ethernet) capturing packets.
+
+   29. Q: What filter shows TCP handshake packets?
+       A: tcp.flags.syn==1
+
+   30. Q: Why is packet capture useful in networking?
+       A: For troubleshooting, analyzing performance, and detecting security issues.
+
+   ============================================================
+   CONCLUSION
+   ============================================================
+
+   - Successfully captured TCP packets from Facebook and HTTP website.
+   - Used appropriate filters to isolate specific IP and protocol traffic.
+   - Observed TCP handshake and HTTP GET/POST exchanges.
+   - Learned the difference between encrypted (HTTPS) and plain (HTTP) data.
+   - Wireshark is a powerful tool for real-time traffic monitoring, 
+     security auditing, and network analysis.
+
+   ============================================================
+   END OF FILE
+   ============================================================
+*/
